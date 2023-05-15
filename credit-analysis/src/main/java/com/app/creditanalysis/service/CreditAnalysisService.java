@@ -2,11 +2,12 @@ package com.app.creditanalysis.service;
 
 import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+@Service
 public class CreditAnalysisService {
     public CreditAnalysisResponse creditAnalising(CreditAnalysisRequest request){
         return new CreditAnalysisResponse(UUID.randomUUID(), true, new BigDecimal("1000.00"),
