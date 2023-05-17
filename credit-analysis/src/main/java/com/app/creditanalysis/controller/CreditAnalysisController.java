@@ -45,4 +45,9 @@ public class CreditAnalysisController {
     public Optional<CreditAnalysisEntity> findAnalysisById(@RequestParam UUID id) {
         return creditAnalysisService.findAnalysisById(id);
     }
+
+    @GetMapping(path = "/find-by-id-client/{id}")
+    public CreditAnalysisResponse findAnalysisByIdClient(@RequestParam UUID id) {
+        return creditAnalysisService.findAnalysisByIdClient(id);
+    }
 }

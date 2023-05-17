@@ -15,7 +15,6 @@ import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
 import feign.FeignException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,4 +91,13 @@ public class CreditAnalysisService {
         }
         return response;
     }
+    public CreditAnalysisResponse findAnalysisByIdClient(UUID id) {
+        CreditAnalysisEntity responseEntity = creditAnalysisRepository.findByClientId(id);
+        if(responseEntity == null){
+            throw new CreditAnalysisNotFound("Credit Analysis with id client %s not exists".formatted(id));
+        }
+        creditAnalysisResponseMapper.from(responseEntity);
+        return creditAnalysisResponseMapper.from(responseEntity);
+    }
+
 }
