@@ -1,7 +1,6 @@
 package com.app.creditanalysis.controller;
 
 import com.app.creditanalysis.apicreditanalysis.ClientApiCreditAnalysis;
-import com.app.creditanalysis.apicreditanalysis.clientdto.ClientDto;
 import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
 import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
@@ -31,9 +30,9 @@ public class CreditAnalysisController {
         return creditAnalysisService.creditAnalising(request);
     }
 
-    @GetMapping(path = "/search-by-cpf/{cpf}")
-    public ClientDto getClient(@RequestParam String cpf) {
-        return creditAnalysisApi.getClientbyCpf(cpf);
+    @GetMapping(path = "/find-by-cpf/{cpf}")
+    public CreditAnalysisResponse findAnalysisByCpfClient(@RequestParam String cpf) {
+        return creditAnalysisService.findAnalysisByCpfClient(cpf);
     }
 
     @GetMapping

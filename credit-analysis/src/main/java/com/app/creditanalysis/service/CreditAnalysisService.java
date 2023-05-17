@@ -43,8 +43,15 @@ public class CreditAnalysisService {
     public CreditAnalysis performCreditAnalysis(CreditAnalysis creditAnalysis) {
         final BigDecimal Credit_Interest_Rate = BigDecimal.valueOf(0.15); // Juro anual de 15%
         final BigDecimal Withdrawal_Limit_Rate = BigDecimal.valueOf(0.10); // Limite de saque de 10%
-        final BigDecimal monthlyIncome = creditAnalysis.monthlyIncome();
+        final BigDecimal maxValueConsidering = new BigDecimal("50000.00");
         final BigDecimal requestedAmount = creditAnalysis.requestedAmount();
+        final BigDecimal monthlyIncome;
+        if (creditAnalysis.monthlyIncome().compareTo(maxValueConsidering) > 0) {
+            monthlyIncome = maxValueConsidering;
+        } else {
+            monthlyIncome = creditAnalysis.monthlyIncome();
+        }
+
         final BigDecimal fiftyPercent = monthlyIncome.multiply(BigDecimal.valueOf(0.5));
 
         final BigDecimal approvedCreditAmount;
@@ -77,7 +84,7 @@ public class CreditAnalysisService {
     public List<CreditAnalysisResponse> getAllCreditAnalysis() {
         List<CreditAnalysisEntity> allEntities = creditAnalysisRepository.findAll();
         List<CreditAnalysisResponse> allResponses = new ArrayList<>();
-        for(CreditAnalysisEntity creditAnalysisEntity : allEntities){
+        for (CreditAnalysisEntity creditAnalysisEntity : allEntities) {
             CreditAnalysisResponse actualResponse = creditAnalysisResponseMapper.from(creditAnalysisEntity);
             allResponses.add(actualResponse);
         }
@@ -86,18 +93,29 @@ public class CreditAnalysisService {
 
     public Optional<CreditAnalysisEntity> findAnalysisById(UUID id) {
         Optional<CreditAnalysisEntity> response = creditAnalysisRepository.findById(id);
-        if(response.isEmpty()){
+        if (response.isEmpty()) {
             throw new CreditAnalysisNotFound("Credit Analysis with id %s not exists".formatted(id));
         }
         return response;
     }
+
     public CreditAnalysisResponse findAnalysisByIdClient(UUID id) {
-        CreditAnalysisEntity responseEntity = creditAnalysisRepository.findByClientId(id);
-        if(responseEntity == null){
+        CreditAnalysisEntity responseEntity = creditAnalysisRepository.findFirstByClientId(id);
+        if (responseEntity == null) {
             throw new CreditAnalysisNotFound("Credit Analysis with id client %s not exists".formatted(id));
         }
         creditAnalysisResponseMapper.from(responseEntity);
         return creditAnalysisResponseMapper.from(responseEntity);
+    }
+
+    public CreditAnalysisResponse findAnalysisByCpfClient(String cpf) {
+        final ClientDto client;
+        try {
+            client = clientApi.getClientbyCpf(cpf);
+        } catch (FeignException e) {
+            throw new ClientNotFoundException("Client not found by cpf %s".formatted(cpf));
+        }
+        return findAnalysisByIdClient(client.id());
     }
 
 }

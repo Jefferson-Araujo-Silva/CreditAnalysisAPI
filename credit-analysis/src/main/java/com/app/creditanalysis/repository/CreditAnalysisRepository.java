@@ -6,5 +6,5 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CreditAnalysisRepository extends JpaRepository<CreditAnalysisEntity, UUID> {
-    CreditAnalysisEntity findByClientId(UUID clientId);
+    CreditAnalysisEntity findFirstByClientId(UUID clientId);
 }

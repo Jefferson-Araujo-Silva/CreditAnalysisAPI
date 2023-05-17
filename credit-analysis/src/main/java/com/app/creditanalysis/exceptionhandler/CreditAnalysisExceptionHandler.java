@@ -2,6 +2,7 @@ package com.app.creditanalysis.exceptionhandler;
 
 import com.app.creditanalysis.exception.ClientNotFoundException;
 import com.app.creditanalysis.exception.CreditAnalysisNotFound;
+import com.app.creditanalysis.exception.InvalidValueException;
 import com.app.creditanalysis.exception.MaximumMonthlyIncomeExceededException;
 import com.app.creditanalysis.exception.RequestedAmountExceedsMonthlyIncome;
 import java.net.URI;
@@ -44,6 +45,15 @@ public class CreditAnalysisExceptionHandler {
 
     @ExceptionHandler(CreditAnalysisNotFound.class)
     public ProblemDetail creditAnalysisExceptionHandler(CreditAnalysisNotFound exception) {
+        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setDetail(exception.getMessage());
+        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
+        problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidValueException.class)
+    public ProblemDetail invalidValueException(InvalidValueException exception) {
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
         problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
