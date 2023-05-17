@@ -45,7 +45,7 @@ public class CreditAnalysisServiceTest {
     private final CreditAnalysisMapper creditAnalysisMapper = new CreditAnalysisMapperImpl();
 
     @Test
-    public void should_create_new_credit_analysis_respose(){}
+    public void should_create_new_credit_analysis_respose(a){}
 
     public static CreditAnalysisResponse creditAnalysisFactory() {
         return CreditAnalysisResponse.builder()
