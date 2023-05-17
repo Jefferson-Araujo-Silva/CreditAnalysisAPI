@@ -4,8 +4,10 @@ import com.app.creditanalysis.apicreditanalysis.ClientApiCreditAnalysis;
 import com.app.creditanalysis.apicreditanalysis.clientdto.ClientDto;
 import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
+import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
 import com.app.creditanalysis.service.CreditAnalysisService;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,7 @@ public class CreditAnalysisController {
     }
 
     @GetMapping(path = "/search-by-cpf/{cpf}")
-    public ClientDto getClient(@RequestParam String cpf){
+    public ClientDto getClient(@RequestParam String cpf) {
         return creditAnalysisApi.getClientbyCpf(cpf);
     }
 
@@ -39,8 +41,8 @@ public class CreditAnalysisController {
         return creditAnalysisService.getAllCreditAnalysis();
     }
 
-    @GetMapping(path = "/{id}")
-    public CreditAnalysisResponse findAnalysisById(@RequestParam UUID id) {
+    @GetMapping(path = "/find-by-id/{id}")
+    public Optional<CreditAnalysisEntity> findAnalysisById(@RequestParam UUID id) {
         return creditAnalysisService.findAnalysisById(id);
     }
 }
