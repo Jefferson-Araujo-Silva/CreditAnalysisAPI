@@ -36,8 +36,8 @@ public class CreditAnalysisService {
     public CreditAnalysisResponse creditAnalising(CreditAnalysisRequest request) {
         final UUID idClient = getIdClient(request.clientId());
         final CreditAnalysis creditAnalysis = creditAnalysisMapper.from(request);
-        final CreditAnalysis creditAnalysisWithWithDrawAndCreditApproved = performCreditAnalysis(creditAnalysis);
-        final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisWithWithDrawAndCreditApproved);
+        final CreditAnalysis creditAnalysisWithWithdrawalAndCreditApproved = performCreditAnalysis(creditAnalysis);
+        final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisWithWithdrawalAndCreditApproved);
         final CreditAnalysisEntity creditAnalysisSaved = saveCreditAnalysis(creditAnalysisEntity);
         return creditAnalysisResponseMapper.from(creditAnalysisSaved);
     }
