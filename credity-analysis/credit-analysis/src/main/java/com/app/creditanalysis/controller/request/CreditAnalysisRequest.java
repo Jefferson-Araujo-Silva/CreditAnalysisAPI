@@ -7,7 +7,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 public record CreditAnalysisRequest(UUID clientId, BigDecimal monthlyIncome, BigDecimal requestedAmount) {
-    @Builder
+    @Builder(toBuilder = true)
     public CreditAnalysisRequest {
     }
 }

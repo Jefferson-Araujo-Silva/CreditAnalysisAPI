@@ -58,26 +58,6 @@ public class CreditAnalysisServiceTest {
     @Spy
     private CreditAnalysisResponseMapper creditAnalysisResponseMapper = new CreditAnalysisResponseMapperImpl();
 
-    public static CreditAnalysisResponse creditAnalysisResponseFactory() {
-        return CreditAnalysisResponse.builder().id(UUID.randomUUID()).date(LocalDateTime.now()).approved(true).approvedLimit(new BigDecimal("30.00"))
-                .withdrawalLimitValue(new BigDecimal("3.00")).annualInterest(15.0).clientId(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"))
-                .build();
-    }
-
-    public static CreditAnalysisRequest creditAnalysisRequestFactory() {
-        return CreditAnalysisRequest.builder().requestedAmount(new BigDecimal("5.00")).monthlyIncome(new BigDecimal("100.0"))
-                .clientId(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560")).build();
-    }
-
-    public static CreditAnalysisEntity creditAnalysisEntityFactory() {
-        return CreditAnalysisEntity.builder().date(LocalDateTime.now()).approved(true).approvedLimit(new BigDecimal("30.00"))
-                .withdrawalLimitValue(new BigDecimal("3.00")).annualInterest(15.0).clientId(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"))
-                .monthlyIncome(new BigDecimal("100.00")).requestedAmount(new BigDecimal("5.00")).annualInterest(15.0).build();
-    }
-
-    public static ClientDto clientFactory() {
-        return ClientDto.builder().cpf("53887957806").id(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560")).build();
-    }
 
     @Test
     public void should_create_new_credit_analysis_response() {
@@ -167,5 +147,38 @@ public class CreditAnalysisServiceTest {
                 .performCreditAnalysis(creditAnalysis).approvedLimit();
         assertEquals(creditLimitValueExpected, creditLimitValueReturned);
     }
+    @Test
+    public void should_not_aprove_when_requested_amount_is_greater_then_monthly_income(){
+        CreditAnalysisEntity entity = creditAnalysisEntityFactory().toBuilder().requestedAmount(new BigDecimal("10"))
+                        .monthlyIncome(new BigDecimal("9")).approved(false).build();
+        when(creditAnalysisRepository.save(creditAnalysisEntityArgumentCaptor.capture()))
+                .thenReturn(entity);
+        final CreditAnalysisRequest request = creditAnalysisRequestFactory()
+                .toBuilder()
+                .requestedAmount(new BigDecimal("10"))
+                .monthlyIncome(new BigDecimal("9"))
+                .build();
+        CreditAnalysisResponse response = creditAnalysisService.creditAnalysing(request);
+        assertEquals(false, response.approved());
+    }
+    public static CreditAnalysisResponse creditAnalysisResponseFactory() {
+        return CreditAnalysisResponse.builder().id(UUID.randomUUID()).date(LocalDateTime.now()).approved(true).approvedLimit(new BigDecimal("30.00"))
+                .withdrawalLimitValue(new BigDecimal("3.00")).annualInterest(15.0).clientId(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"))
+                .build();
+    }
 
+    public static CreditAnalysisRequest creditAnalysisRequestFactory() {
+        return CreditAnalysisRequest.builder().requestedAmount(new BigDecimal("5.00")).monthlyIncome(new BigDecimal("100.0"))
+                .clientId(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560")).build();
+    }
+
+    public static CreditAnalysisEntity creditAnalysisEntityFactory() {
+        return CreditAnalysisEntity.builder().date(LocalDateTime.now()).approved(true).approvedLimit(new BigDecimal("30.00"))
+                .withdrawalLimitValue(new BigDecimal("3.00")).annualInterest(15.0).clientId(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"))
+                .monthlyIncome(new BigDecimal("100.00")).requestedAmount(new BigDecimal("5.00")).annualInterest(15.0).build();
+    }
+
+    public static ClientDto clientFactory() {
+        return ClientDto.builder().cpf("53887957806").id(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560")).build();
+    }
 }

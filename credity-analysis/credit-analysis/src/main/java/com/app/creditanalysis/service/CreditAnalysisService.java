@@ -15,6 +15,7 @@ import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
 import feign.FeignException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,10 +35,27 @@ public class CreditAnalysisService {
     public CreditAnalysisResponse creditAnalysing(CreditAnalysisRequest request) {
         final CreditAnalysis creditAnalysis = creditAnalysisMapper.from(request);
         getIdClient(request.clientId());
-        final CreditAnalysis creditAnalysisWithWithdrawalAndCreditApproved = performCreditAnalysis(creditAnalysis);
-        final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisWithWithdrawalAndCreditApproved);
-        final CreditAnalysisEntity creditAnalysisSaved = saveCreditAnalysis(creditAnalysisEntity);
-        return creditAnalysisResponseMapper.from(creditAnalysisSaved);
+        final CreditAnalysis creditAnalysisToBeSaved;
+        if (creditAnalysis.approved()) {
+            creditAnalysisToBeSaved = performCreditAnalysis(creditAnalysis);
+        }else {
+            creditAnalysisToBeSaved = notApproved(creditAnalysis);
+        }
+            final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisToBeSaved);
+            final CreditAnalysisEntity creditAnalysisSaved = saveCreditAnalysis(creditAnalysisEntity);
+            return creditAnalysisResponseMapper.from(creditAnalysisSaved);
+    }
+
+    public CreditAnalysis notApproved(CreditAnalysis creditAnalysis){
+        return creditAnalysis.toBuilder()
+                .approved(false)
+                .monthlyIncome(creditAnalysis.monthlyIncome())
+                .approvedLimit(new BigDecimal("0.0"))
+                .withdrawalLimitValue(new BigDecimal("0.0"))
+                .date(LocalDateTime.now())
+                .annualInterest(15.0)
+                .clientId(creditAnalysis.clientId())
+                .requestedAmount(creditAnalysis.requestedAmount()).build();
     }
 
     public CreditAnalysis performCreditAnalysis(CreditAnalysis creditAnalysis) {
