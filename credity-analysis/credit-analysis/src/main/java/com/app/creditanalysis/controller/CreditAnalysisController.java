@@ -27,7 +27,7 @@ public class CreditAnalysisController {
 
     @PostMapping
     public CreditAnalysisResponse createCredit(@RequestBody CreditAnalysisRequest request) {
-        return creditAnalysisService.creditAnalising(request);
+        return creditAnalysisService.creditAnalysing(request);
     }
 
     @GetMapping(path = "/find-by-cpf/{cpf}")

@@ -19,9 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,9 +31,9 @@ public class CreditAnalysisService {
     private final CreditAnalysisEntityMapper creditAnalysisEntityMapper;
     private final ClientApiCreditAnalysis clientApi;
 
-    public CreditAnalysisResponse creditAnalising(CreditAnalysisRequest request) {
-        final UUID idClient = getIdClient(request.clientId());
+    public CreditAnalysisResponse creditAnalysing(CreditAnalysisRequest request) {
         final CreditAnalysis creditAnalysis = creditAnalysisMapper.from(request);
+        getIdClient(request.clientId());
         final CreditAnalysis creditAnalysisWithWithdrawalAndCreditApproved = performCreditAnalysis(creditAnalysis);
         final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisWithWithdrawalAndCreditApproved);
         final CreditAnalysisEntity creditAnalysisSaved = saveCreditAnalysis(creditAnalysisEntity);
@@ -43,11 +41,11 @@ public class CreditAnalysisService {
     }
 
     public CreditAnalysis performCreditAnalysis(CreditAnalysis creditAnalysis) {
-        final BigDecimal Credit_Interest_Rate = BigDecimal.valueOf(0.15); // Juro anual de 15%
         final BigDecimal Withdrawal_Limit_Rate = BigDecimal.valueOf(0.10); // Limite de saque de 10%
         final BigDecimal maxValueConsidering = new BigDecimal("50000.00");
         final BigDecimal requestedAmount = creditAnalysis.requestedAmount();
         final BigDecimal monthlyIncome;
+
         if (creditAnalysis.monthlyIncome().compareTo(maxValueConsidering) > 0) {
             monthlyIncome = maxValueConsidering;
         } else {
@@ -73,14 +71,17 @@ public class CreditAnalysisService {
         return creditAnalysisRepository.save(entity);
     }
 
-    public UUID getIdClient(UUID id) {
-        final ClientDto client;
+    public void getIdClient(UUID id) {
+        ClientDto clientReturned = null;
         try {
-            client = clientApi.getClientById(id);
+            clientReturned = clientApi.getClientById(id);
         } catch (FeignException e) {
-            throw new ClientNotFoundException("Client not found by id %s".formatted(id));
+            if(clientReturned == null) {
+                ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
+                clientNotFoundException.printStackTrace();
+                throw clientNotFoundException;
+            }
         }
-        return client.id();
     }
 
     public List<CreditAnalysisResponse> getAllCreditAnalysis() {
