@@ -85,21 +85,24 @@ public class CreditAnalysisService {
 
         return creditAnalysis.toBuilder().approved(true).withdrawalLimitValue(withdrawalLimit).approvedLimit(approvedCreditAmount).build();
     }
-//c
+
     public CreditAnalysisEntity saveCreditAnalysis(CreditAnalysisEntity entity) {
         return creditAnalysisRepository.save(entity);
     }
 
-    public void getIdClient(UUID id) {
+    private void getIdClient(UUID id) {
         ClientDto clientReturned = null;
         try {
             clientReturned = clientApi.getClientById(id);
-        } catch (FeignException e) {
             if(clientReturned == null) {
                 ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
                 clientNotFoundException.printStackTrace();
                 throw clientNotFoundException;
             }
+        } catch (FeignException e) {
+                ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
+                clientNotFoundException.printStackTrace();
+                throw clientNotFoundException;
         }
     }
 
