@@ -80,14 +80,16 @@ public class CreditAnalysisServiceTest {
 
     @Test
     public void should_return_where_client_where_id_client_is_1f017304_c7cf_45cb_e2c_5f6ce1f22560() {
-        when(creditAnalysisRepository.findAllByClientId(idClientArgumentCaptor.capture())).thenReturn(new ArrayList<>());
 
-        final CreditAnalysisEntity entity = creditAnalysisEntityFactory();
+        when(creditAnalysisRepository.findAllByClientId(idClientArgumentCaptor.capture())).thenReturn(List.of(creditAnalysisEntityFactory()));
+
+        final List<CreditAnalysisEntity> entity = new ArrayList<>();
+        entity.add(creditAnalysisEntityFactory());
         final List<CreditAnalysisResponse> response = creditAnalysisService.findAnalysisByIdClient(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"));
-        assertEquals(entity.getAnnualInterest(), response.get(0).annualInterest());
-        assertEquals(entity.getApproved(), response.get(0).approved());
-        assertEquals(entity.getApprovedLimit(), response.get(0).approvedLimit());
-        assertEquals(entity.getWithdrawlLimitValue(), response.get(0).withdrawalLimitValue());
+        assertEquals(entity.get(0).getAnnualInterest(), response.get(0).annualInterest());
+        assertEquals(entity.get(0).getApproved(), response.get(0).approved());
+        assertEquals(entity.get(0).getApprovedLimit(), response.get(0).approvedLimit());
+        assertEquals(entity.get(0).getWithdrawlLimitValue(), response.get(0).withdrawalLimitValue());
     }
 
     @Test
