@@ -122,9 +122,8 @@ public class CreditAnalysisService {
     }
 
     public List<CreditAnalysisResponse> findAnalysisByIdClient(UUID id) {
-        final List<CreditAnalysisEntity> responseEntity;
-        responseEntity = creditAnalysisRepository.findAllByClientId(id);
-        if (responseEntity == null) {
+        final List<CreditAnalysisEntity> responseEntity = creditAnalysisRepository.findAllByClientId(id);
+        if (responseEntity.size() == 0) {
             throw new CreditAnalysisNotFound("Credit Analysis with id client %s not exists".formatted(id));
         }
         return responseEntity.stream().map(creditAnalysisResponseMapper::from).collect(Collectors.toList());

@@ -7,9 +7,30 @@ services:
       POSTGRES_PASSWORD: senha123
     ports:
       - "5433:5432"
+    networks:
+      - mynetwork
+  analysisapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - mynetwork
+    depends_on:
+      - postgres-analysis
+    environment:
+      - POSTGRES_URL=jdbc:postgresql://postgres:5432/postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=senha123
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8070:8080
+networks:
+   mynetwork:
+    external: true
+volumes:
+  postgres-data:
