@@ -1,0 +1,15 @@
+services:
+  postgres-analysis:
+    image: postgres
+    container_name: postgres-analysis
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senha123
+    ports:
+      - "5433:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8070:8080
