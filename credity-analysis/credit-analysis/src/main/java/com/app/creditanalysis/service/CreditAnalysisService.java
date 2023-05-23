@@ -84,7 +84,7 @@ public class CreditAnalysisService {
 
         return creditAnalysis.toBuilder().approved(true).withdrawalLimitValue(withdrawalLimit).approvedLimit(approvedCreditAmount).build();
     }
-
+//c
     public CreditAnalysisEntity saveCreditAnalysis(CreditAnalysisEntity entity) {
         return creditAnalysisRepository.save(entity);
     }

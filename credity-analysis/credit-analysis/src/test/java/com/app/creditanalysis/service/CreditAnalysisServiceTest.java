@@ -22,9 +22,12 @@ import com.app.creditanalysis.model.CreditAnalysis;
 import com.app.creditanalysis.repository.CreditAnalysisRepository;
 import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
 import feign.FeignException;
+import feign.Response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -57,7 +60,6 @@ public class CreditAnalysisServiceTest {
     private CreditAnalysisEntityMapper creditAnalysisEntityMapper = new CreditAnalysisEntityMapperImpl();
     @Spy
     private CreditAnalysisResponseMapper creditAnalysisResponseMapper = new CreditAnalysisResponseMapperImpl();
-
 
     @Test
     public void should_create_new_credit_analysis_response() {
@@ -93,6 +95,7 @@ public class CreditAnalysisServiceTest {
     @Test
     public void if_the_monthly_income_value_is_greater_than_50000_and_request_value_is_less_then_50_percent_approved_limit_will_be_7500() {
         CreditAnalysis request = CreditAnalysis.builder()
+                .clientId(UUID.randomUUID())
                 .monthlyIncome(new BigDecimal("55000.00"))
                 .requestedAmount(new BigDecimal("50.0")).build();
 
@@ -103,13 +106,19 @@ public class CreditAnalysisServiceTest {
     }
 
     @Test
-    public void should_throws_requested_amount_exceeds_monthly_income(){
-        CreditAnalysisRequest request = CreditAnalysisRequest.builder()
+    public void should_not_approve_credit_if_requested_amount_is_greater_then_monthly_income(){
+        CreditAnalysisEntity returned = CreditAnalysisEntity.builder()
                 .clientId(UUID.randomUUID())
                 .monthlyIncome(new BigDecimal("50.00"))
                 .requestedAmount(new BigDecimal("60.0")).build();
+        when(creditAnalysisService.saveCreditAnalysis(creditAnalysisEntityArgumentCaptor.capture())).thenReturn(returned);
 
-        assertThrows(RequestedAmountExceedsMonthlyIncome.class, ()-> creditAnalysisService.creditAnalysing(request));
+        CreditAnalysisRequest request = creditAnalysisRequestFactory().toBuilder()
+                .requestedAmount(new BigDecimal("60.0"))
+                .monthlyIncome(new BigDecimal("50.0")).build();
+        CreditAnalysisResponse response = creditAnalysisService.creditAnalysing(request);
+        Boolean expectedAproved = false;
+        assertEquals(expectedAproved, response.approved());
     }
     @Test
     public void should_throws_client_not_found_exception(){
@@ -125,6 +134,7 @@ public class CreditAnalysisServiceTest {
     @Test
     public void withdrawal_threshold_must_be_10_percent_of_the_approved_amount(){
         final CreditAnalysis creditAnalysis = CreditAnalysis.builder()
+                .clientId(UUID.randomUUID())
                 .monthlyIncome(new BigDecimal("100.00"))
                 .requestedAmount(new BigDecimal("40.0"))
                 .build();
@@ -140,6 +150,7 @@ public class CreditAnalysisServiceTest {
         final CreditAnalysis creditAnalysis = CreditAnalysis.builder()
                 .monthlyIncome(new BigDecimal("100.00"))
                 .requestedAmount(new BigDecimal("40.0"))
+                .clientId(UUID.randomUUID())
                 .build();
 
         final BigDecimal creditLimitValueExpected = new BigDecimal("30.00");
@@ -147,6 +158,7 @@ public class CreditAnalysisServiceTest {
                 .performCreditAnalysis(creditAnalysis).approvedLimit();
         assertEquals(creditLimitValueExpected, creditLimitValueReturned);
     }
+    
     @Test
     public void should_not_aprove_when_requested_amount_is_greater_then_monthly_income(){
         CreditAnalysisEntity entity = creditAnalysisEntityFactory().toBuilder().requestedAmount(new BigDecimal("10"))
