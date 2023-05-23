@@ -31,7 +31,7 @@ public class CreditAnalysisController {
     }
 
     @GetMapping(path = "/find-by-cpf/{cpf}")
-    public CreditAnalysisResponse findAnalysisByCpfClient(@RequestParam String cpf) {
+    public List<CreditAnalysisResponse> findAnalysisByCpfClient(@RequestParam String cpf) {
         return creditAnalysisService.findAnalysisByCpfClient(cpf);
     }
 
@@ -46,7 +46,7 @@ public class CreditAnalysisController {
     }
 
     @GetMapping(path = "/find-by-id-client/{id}")
-    public CreditAnalysisResponse findAnalysisByIdClient(@RequestParam UUID id) {
+    public List<CreditAnalysisResponse> findAnalysisByIdClient(@RequestParam UUID id) {
         return creditAnalysisService.findAnalysisByIdClient(id);
     }
 }

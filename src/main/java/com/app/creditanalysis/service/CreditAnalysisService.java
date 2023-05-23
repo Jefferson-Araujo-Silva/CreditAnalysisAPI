@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -120,16 +121,16 @@ public class CreditAnalysisService {
         return response;
     }
 
-    public CreditAnalysisResponse findAnalysisByIdClient(UUID id) {
-        final CreditAnalysisEntity responseEntity = creditAnalysisRepository.findFirstByClientId(id);
+    public List<CreditAnalysisResponse> findAnalysisByIdClient(UUID id) {
+        final List<CreditAnalysisEntity> responseEntity;
+        responseEntity = creditAnalysisRepository.findAllByClientId(id);
         if (responseEntity == null) {
             throw new CreditAnalysisNotFound("Credit Analysis with id client %s not exists".formatted(id));
         }
-        creditAnalysisResponseMapper.from(responseEntity);
-        return creditAnalysisResponseMapper.from(responseEntity);
+        return responseEntity.stream().map(creditAnalysisResponseMapper::from).collect(Collectors.toList());
     }
 
-    public CreditAnalysisResponse findAnalysisByCpfClient(String cpf) {
+    public List<CreditAnalysisResponse> findAnalysisByCpfClient(String cpf) {
         final ClientDto client;
         try {
             client = clientApi.getClientbyCpf(cpf);

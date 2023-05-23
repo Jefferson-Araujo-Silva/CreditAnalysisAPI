@@ -10,8 +10,6 @@ import com.app.creditanalysis.apicreditanalysis.clientdto.ClientDto;
 import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
 import com.app.creditanalysis.exception.ClientNotFoundException;
-import com.app.creditanalysis.exception.MaximumMonthlyIncomeExceededException;
-import com.app.creditanalysis.exception.RequestedAmountExceedsMonthlyIncome;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapper;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapperImpl;
 import com.app.creditanalysis.mapper.CreditAnalysisMapper;
@@ -22,12 +20,12 @@ import com.app.creditanalysis.model.CreditAnalysis;
 import com.app.creditanalysis.repository.CreditAnalysisRepository;
 import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
 import feign.FeignException;
-import feign.Response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -82,14 +80,14 @@ public class CreditAnalysisServiceTest {
 
     @Test
     public void should_return_where_client_where_id_client_is_1f017304_c7cf_45cb_e2c_5f6ce1f22560() {
-        when(creditAnalysisRepository.findFirstByClientId(idClientArgumentCaptor.capture())).thenReturn(creditAnalysisEntityFactory());
+        when(creditAnalysisRepository.findAllByClientId(idClientArgumentCaptor.capture())).thenReturn(new ArrayList<>());
 
         final CreditAnalysisEntity entity = creditAnalysisEntityFactory();
-        final CreditAnalysisResponse response = creditAnalysisService.findAnalysisByIdClient(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"));
-        assertEquals(entity.getAnnualInterest(), response.annualInterest());
-        assertEquals(entity.getApproved(), response.approved());
-        assertEquals(entity.getApprovedLimit(), response.approvedLimit());
-        assertEquals(entity.getWithdrawlLimitValue(), response.withdrawalLimitValue());
+        final List<CreditAnalysisResponse> response = creditAnalysisService.findAnalysisByIdClient(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"));
+        assertEquals(entity.getAnnualInterest(), response.get(0).annualInterest());
+        assertEquals(entity.getApproved(), response.get(0).approved());
+        assertEquals(entity.getApprovedLimit(), response.get(0).approvedLimit());
+        assertEquals(entity.getWithdrawlLimitValue(), response.get(0).withdrawalLimitValue());
     }
 
     @Test
@@ -116,9 +114,10 @@ public class CreditAnalysisServiceTest {
         CreditAnalysisRequest request = creditAnalysisRequestFactory().toBuilder()
                 .requestedAmount(new BigDecimal("60.0"))
                 .monthlyIncome(new BigDecimal("50.0")).build();
-        CreditAnalysisResponse response = creditAnalysisService.creditAnalysing(request);
+        creditAnalysisService.creditAnalysing(request);
+        CreditAnalysisEntity response = creditAnalysisEntityArgumentCaptor.getValue();
         Boolean expectedAproved = false;
-        assertEquals(expectedAproved, response.approved());
+        assertEquals(expectedAproved, response.getApproved());
     }
     @Test
     public void should_throws_client_not_found_exception(){
