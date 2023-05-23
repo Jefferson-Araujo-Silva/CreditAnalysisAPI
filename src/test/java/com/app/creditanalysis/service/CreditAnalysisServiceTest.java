@@ -10,8 +10,6 @@ import com.app.creditanalysis.apicreditanalysis.clientdto.ClientDto;
 import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
 import com.app.creditanalysis.exception.ClientNotFoundException;
-import com.app.creditanalysis.exception.MaximumMonthlyIncomeExceededException;
-import com.app.creditanalysis.exception.RequestedAmountExceedsMonthlyIncome;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapper;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapperImpl;
 import com.app.creditanalysis.mapper.CreditAnalysisMapper;
@@ -22,12 +20,9 @@ import com.app.creditanalysis.model.CreditAnalysis;
 import com.app.creditanalysis.repository.CreditAnalysisRepository;
 import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
 import feign.FeignException;
-import feign.Response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -116,9 +111,10 @@ public class CreditAnalysisServiceTest {
         CreditAnalysisRequest request = creditAnalysisRequestFactory().toBuilder()
                 .requestedAmount(new BigDecimal("60.0"))
                 .monthlyIncome(new BigDecimal("50.0")).build();
-        CreditAnalysisResponse response = creditAnalysisService.creditAnalysing(request);
+        creditAnalysisService.creditAnalysing(request);
+        CreditAnalysisEntity response = creditAnalysisEntityArgumentCaptor.getValue();
         Boolean expectedAproved = false;
-        assertEquals(expectedAproved, response.approved());
+        assertEquals(expectedAproved, response.getApproved());
     }
     @Test
     public void should_throws_client_not_found_exception(){
