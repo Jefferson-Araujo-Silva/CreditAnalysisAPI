@@ -10,6 +10,7 @@ import com.app.creditanalysis.apicreditanalysis.clientdto.ClientDto;
 import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
 import com.app.creditanalysis.exception.ClientNotFoundException;
+import com.app.creditanalysis.exception.CreditAnalysisNotFound;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapper;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapperImpl;
 import com.app.creditanalysis.mapper.CreditAnalysisMapper;
@@ -91,9 +92,19 @@ public class CreditAnalysisServiceTest {
         assertEquals(entity.get(0).getApprovedLimit(), response.get(0).approvedLimit());
         assertEquals(entity.get(0).getWithdrawlLimitValue(), response.get(0).withdrawalLimitValue());
     }
-
     @Test
-    public void if_the_monthly_income_value_is_greater_than_50000_and_request_value_is_less_then_50_percent_approved_limit_will_be_7500() {
+    public void should_throws_credit_analysis_not_found_where_id_client_is_1f017304_c7cf_45cb_e2c_5f6ce1f22560() {
+
+        when(creditAnalysisRepository.findAllByClientId(idClientArgumentCaptor.capture())).thenReturn(new ArrayList<>());
+
+        final List<CreditAnalysisEntity> entity = new ArrayList<>();
+        entity.add(creditAnalysisEntityFactory());
+        final CreditAnalysisNotFound creditAnalysisNotFound = assertThrows(CreditAnalysisNotFound.class,
+                () -> creditAnalysisService.findAnalysisByIdClient(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560")));
+        assertEquals("Credit Analysis with id client 1f017304-c7cf-45cb-8e2c-5f6ce1f22560 not exists", creditAnalysisNotFound.getMessage());
+    }
+    @Test
+    public void if_the_monthly_income_value_is_greater_than_50000_and_request_value_is_less_then_50_percent_approved_limit_will_be_15000() {
         CreditAnalysis request = CreditAnalysis.builder()
                 .clientId(UUID.randomUUID())
                 .monthlyIncome(new BigDecimal("55000.00"))
@@ -104,7 +115,18 @@ public class CreditAnalysisServiceTest {
 
         assertEquals(approvedLimitValueExpected, approvedLimitValueResponse);
     }
+    @Test
+    public void if_the_monthly_income_value_is_greater_than_50000_and_request_value_is_more_then_50_percent_approved_limit_will_be_7500() {
+        CreditAnalysis request = CreditAnalysis.builder()
+                .clientId(UUID.randomUUID())
+                .monthlyIncome(new BigDecimal("55000.00"))
+                .requestedAmount(new BigDecimal("50000.00")).build();
 
+        final BigDecimal approvedLimitValueExpected = new BigDecimal("7500.00");
+        BigDecimal approvedLimitValueResponse = creditAnalysisService.performCreditAnalysis(request).approvedLimit();
+
+        assertEquals(approvedLimitValueExpected, approvedLimitValueResponse);
+    }
     @Test
     public void should_not_approve_credit_if_requested_amount_is_greater_then_monthly_income(){
         CreditAnalysisEntity returned = CreditAnalysisEntity.builder()
