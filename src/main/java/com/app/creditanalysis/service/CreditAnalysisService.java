@@ -94,12 +94,15 @@ public class CreditAnalysisService {
         ClientDto clientReturned = null;
         try {
             clientReturned = clientApi.getClientById(id);
-        } catch (FeignException e) {
             if(clientReturned == null) {
                 ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
                 clientNotFoundException.printStackTrace();
                 throw clientNotFoundException;
             }
+        } catch (FeignException e) {
+                ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
+                clientNotFoundException.printStackTrace();
+                throw clientNotFoundException;
         }
     }
 

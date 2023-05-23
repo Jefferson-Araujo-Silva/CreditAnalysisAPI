@@ -104,6 +104,14 @@ public class CreditAnalysisServiceTest {
         assertEquals("Credit Analysis with id client 1f017304-c7cf-45cb-8e2c-5f6ce1f22560 not exists", creditAnalysisNotFound.getMessage());
     }
     @Test
+    public void should_throws_client_not_found_where_id_client_is_1f017304_c7cf_45cb_e2c_5f6ce1f22560() {
+        when(creditAnalysisApi.getClientById(idClientArgumentCaptor.capture())).thenReturn(null);
+
+        final ClientNotFoundException clientNotFoundException = assertThrows(ClientNotFoundException.class,
+                () -> creditAnalysisService.creditAnalysing(creditAnalysisRequestFactory()));
+        assertEquals("Client not found by id 1f017304-c7cf-45cb-8e2c-5f6ce1f22560", clientNotFoundException.getMessage());
+    }
+    @Test
     public void if_the_monthly_income_value_is_greater_than_50000_and_request_value_is_less_then_50_percent_approved_limit_will_be_15000() {
         CreditAnalysis request = CreditAnalysis.builder()
                 .clientId(UUID.randomUUID())
