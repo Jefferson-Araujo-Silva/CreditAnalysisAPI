@@ -115,6 +115,7 @@ public class CreditAnalysisServiceTest {
         assertNotNull(response);
     }
     @Test
+
     public void should_return_all_credit_analysis(){
         List<CreditAnalysisEntity> returned = List.of(creditAnalysisEntityFactory());
         when(creditAnalysisRepository.findAll())
@@ -129,6 +130,7 @@ public class CreditAnalysisServiceTest {
         assertEquals(returned.get(0).getClientId(), response.get(0).clientId());
     }
     @Test
+feature/credit-analysis
     public void should_throw_credit_analysis_analysis_not_found_by_id(){
         Optional<CreditAnalysisEntity> returned = Optional.empty();
         when(creditAnalysisRepository.findById(idClientArgumentCaptor.capture()))
