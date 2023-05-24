@@ -107,7 +107,21 @@ public class CreditAnalysisServiceTest {
     }
     @Test
     public void should_return_credit_analysis_by_id(){
+        Optional<CreditAnalysisEntity> returned = Optional.of(creditAnalysisEntityFactory());
+        when(creditAnalysisRepository.findById(idClientArgumentCaptor.capture()))
+                .thenReturn(returned);
 
+        List<CreditAnalysisResponse> response = creditAnalysisService.findAnalysisById(creditAnalysisEntityFactory().getId());
+        assertNotNull(response);
+    }
+    @Test
+    public void should_throw_credit_analysis_analysis_not_found_by_id(){
+        Optional<CreditAnalysisEntity> returned = Optional.empty();
+        when(creditAnalysisRepository.findById(idClientArgumentCaptor.capture()))
+                .thenReturn(returned);
+
+        CreditAnalysisNotFound execpetion = assertThrows(CreditAnalysisNotFound.class, () -> creditAnalysisService.findAnalysisById(creditAnalysisEntityFactory().getId()));
+        assertEquals("Credit Analysis with id %s not exists".formatted(idClientArgumentCaptor.getValue()), execpetion.getMessage());
     }
     @Test
     public void should_throws_credit_analysis_not_found_where_id_client_is_1f017304_c7cf_45cb_e2c_5f6ce1f22560() {
