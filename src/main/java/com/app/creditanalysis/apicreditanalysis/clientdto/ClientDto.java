@@ -3,11 +3,10 @@ package com.app.creditanalysis.apicreditanalysis.clientdto;
 import java.util.UUID;
 import lombok.Builder;
 
-public record ClientDto(UUID id, String cpf) {
+public record ClientDto(UUID id) {
     @Builder(toBuilder = true)
 
-    public ClientDto(UUID id, String cpf) {
+    public ClientDto(UUID id) {
         this.id = id;
-        this.cpf = cpf;
     }
 }
