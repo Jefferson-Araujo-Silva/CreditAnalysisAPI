@@ -116,12 +116,15 @@ public class CreditAnalysisService {
         return allResponses;
     }
 
-    public Optional<CreditAnalysisEntity> findAnalysisById(UUID id) {
-        final Optional<CreditAnalysisEntity> response = creditAnalysisRepository.findById(id);
-        if (response.isEmpty()) {
+    public List<CreditAnalysisResponse> findAnalysisById(UUID id) {
+        final Optional<CreditAnalysisEntity> responseEntity = creditAnalysisRepository.findById(id);
+        if (responseEntity.isEmpty()) {
             throw new CreditAnalysisNotFound("Credit Analysis with id %s not exists".formatted(id));
         }
-        return response;
+        List<CreditAnalysisEntity> response = new ArrayList<>();
+        response = responseEntity.stream().toList();
+
+        return  response.stream().map(creditAnalysisResponseMapper::from).collect(Collectors.toList());
     }
 
     public List<CreditAnalysisResponse> findAnalysisByIdClient(UUID id) {
