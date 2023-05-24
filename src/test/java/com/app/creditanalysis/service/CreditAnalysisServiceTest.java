@@ -107,7 +107,6 @@ public class CreditAnalysisServiceTest {
     }
     @Test
     public void should_return_credit_analysis_by_id(){
-feature/credit-analysis
         Optional<CreditAnalysisEntity> returned = Optional.of(creditAnalysisEntityFactory());
         when(creditAnalysisRepository.findById(idClientArgumentCaptor.capture()))
                 .thenReturn(returned);
