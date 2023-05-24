@@ -46,6 +46,8 @@ public class CreditAnalysisServiceTest {
     @Captor
     ArgumentCaptor<UUID> idClientArgumentCaptor;
     @Captor
+    ArgumentCaptor<String> cpfClientArgumentCaptor;
+    @Captor
     ArgumentCaptor<CreditAnalysisEntity> creditAnalysisEntityArgumentCaptor;
     @Captor
     ArgumentCaptor<CreditAnalysis> creditAnalysisArgumentCaptor;
@@ -91,6 +93,21 @@ public class CreditAnalysisServiceTest {
         assertEquals(entity.get(0).getApproved(), response.get(0).approved());
         assertEquals(entity.get(0).getApprovedLimit(), response.get(0).approvedLimit());
         assertEquals(entity.get(0).getWithdrawlLimitValue(), response.get(0).withdrawalLimitValue());
+    }
+    @Test
+    public void should_return_where_client_where_cpf_client_is_53887957806() {
+        List<CreditAnalysisEntity> responseList = new ArrayList<>();
+        responseList.add(creditAnalysisEntityFactory());
+        when(creditAnalysisApi.getClientbyCpf(cpfClientArgumentCaptor.capture())).thenReturn(clientFactory());
+        when(creditAnalysisRepository.findAllByClientId(idClientArgumentCaptor.capture()))
+                .thenReturn(responseList);
+
+        List<CreditAnalysisResponse> response = creditAnalysisService
+                .findAnalysisByCpfClient("53887957806");
+    }
+    @Test
+    public void should_return_credit_analysis_by_id(){
+
     }
     @Test
     public void should_throws_credit_analysis_not_found_where_id_client_is_1f017304_c7cf_45cb_e2c_5f6ce1f22560() {
@@ -141,6 +158,7 @@ public class CreditAnalysisServiceTest {
                 .clientId(UUID.randomUUID())
                 .monthlyIncome(new BigDecimal("50.00"))
                 .requestedAmount(new BigDecimal("60.0")).build();
+        when(creditAnalysisApi.getClientById(idClientArgumentCaptor.capture())).thenReturn(clientFactory());
         when(creditAnalysisService.saveCreditAnalysis(creditAnalysisEntityArgumentCaptor.capture())).thenReturn(returned);
 
         CreditAnalysisRequest request = creditAnalysisRequestFactory().toBuilder()
@@ -152,7 +170,7 @@ public class CreditAnalysisServiceTest {
         assertEquals(expectedAproved, response.getApproved());
     }
     @Test
-    public void should_throws_client_not_found_exception(){
+    public void should_throws_client_not_found_exception_by_id(){
         when(creditAnalysisApi.getClientById(idClientArgumentCaptor.capture())).thenThrow(FeignException.class);
 
         final CreditAnalysisRequest creditAnalysisRequest = creditAnalysisRequestFactory();
@@ -160,6 +178,17 @@ public class CreditAnalysisServiceTest {
                 ()-> creditAnalysisService.creditAnalysing(creditAnalysisRequest));
 
         assertEquals("Client not found by id 1f017304-c7cf-45cb-8e2c-5f6ce1f22560", clientNotFoundException.getMessage());
+    }
+
+    @Test
+    public void should_throws_client_not_found_exception_by_cpf(){
+        when(creditAnalysisApi.getClientbyCpf(cpfClientArgumentCaptor.capture())).thenThrow(FeignException.class);
+
+        final CreditAnalysisRequest creditAnalysisRequest = creditAnalysisRequestFactory();
+        ClientNotFoundException clientNotFoundException = assertThrows(ClientNotFoundException.class,
+                ()-> creditAnalysisService.findAnalysisByCpfClient("53887957806"));
+
+        assertEquals("Client not found by cpf 53887957806", clientNotFoundException.getMessage());
     }
 
     @Test
@@ -194,6 +223,7 @@ public class CreditAnalysisServiceTest {
     public void should_not_aprove_when_requested_amount_is_greater_then_monthly_income(){
         CreditAnalysisEntity entity = creditAnalysisEntityFactory().toBuilder().requestedAmount(new BigDecimal("10"))
                         .monthlyIncome(new BigDecimal("9")).approved(false).build();
+        when(creditAnalysisApi.getClientById(idClientArgumentCaptor.capture())).thenReturn(clientFactory());
         when(creditAnalysisRepository.save(creditAnalysisEntityArgumentCaptor.capture()))
                 .thenReturn(entity);
         final CreditAnalysisRequest request = creditAnalysisRequestFactory()
