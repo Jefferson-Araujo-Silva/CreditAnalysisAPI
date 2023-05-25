@@ -48,7 +48,11 @@ public class CreditAnalysisExceptionHandler {
         if (exception.getMessage().contains("UUID")){
             problemDetail.setDetail(
                     "id value in json is invalid, id must be a 36 character string with numbers, letters and dashes");
-        }else {
+        }
+        else if(exception.getMessage().contains("BigDecimal")){
+            problemDetail.setDetail("monthly income and requested amount value cannot contain a string character");
+        }
+        else {
             problemDetail.setDetail("Values in credit analysis JSON must not be null");
         }
         problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
