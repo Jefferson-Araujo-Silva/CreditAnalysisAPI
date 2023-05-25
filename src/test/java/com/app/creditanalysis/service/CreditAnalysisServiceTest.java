@@ -148,6 +148,7 @@ public class CreditAnalysisServiceTest {
     }
 
     @Test
+
     public void should_throw_credit_analysis_analysis_not_found_by_id() {
         Optional<CreditAnalysisEntity> returned = Optional.empty();
         when(creditAnalysisRepository.findById(idClientArgumentCaptor.capture())).thenReturn(returned);
