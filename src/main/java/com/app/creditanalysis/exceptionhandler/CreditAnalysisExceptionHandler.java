@@ -6,6 +6,8 @@ import com.app.creditanalysis.exception.InvalidValueException;
 import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
 import java.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CreditAnalysisExceptionHandler {
     public static final String TIMESTAMP = "timestamp";
+    private static final Logger logger = LoggerFactory.getLogger(CreditAnalysisExceptionHandler.class);
 
     @ExceptionHandler(ClientNotFoundException.class)
     public ProblemDetail clientNotFoundException(ClientNotFoundException exception) {
+        logger.error(String.valueOf(exception));
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
         problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/400"));
@@ -27,6 +31,7 @@ public class CreditAnalysisExceptionHandler {
 
     @ExceptionHandler(CreditAnalysisNotFound.class)
     public ProblemDetail creditAnalysisExceptionHandler(CreditAnalysisNotFound exception) {
+        logger.error(String.valueOf(exception));
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
         problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
@@ -36,6 +41,7 @@ public class CreditAnalysisExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail constraintViolationException(ConstraintViolationException exception) {
+        logger.error(String.valueOf(exception));
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
         problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
@@ -44,6 +50,7 @@ public class CreditAnalysisExceptionHandler {
     }
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ProblemDetail httpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        logger.error(String.valueOf(exception));
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         if (exception.getMessage().contains("UUID")){
             problemDetail.setDetail(
@@ -62,6 +69,7 @@ public class CreditAnalysisExceptionHandler {
 
     @ExceptionHandler(InvalidValueException.class)
     public ProblemDetail invalidValueException(InvalidValueException exception) {
+        logger.error(String.valueOf(exception));
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
         problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
