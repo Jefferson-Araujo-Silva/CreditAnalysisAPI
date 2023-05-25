@@ -31,7 +31,7 @@ public class CreditAnalysisEntity {
 
     @Builder(toBuilder = true)
     public CreditAnalysisEntity(BigDecimal monthlyIncome, Boolean approved, BigDecimal approvedLimit, BigDecimal requestedAmount,
-                                BigDecimal withdrawalLimitValue, Double annualInterest, UUID clientId, LocalDateTime date) {
+                                BigDecimal withdrawalLimitValue, Double annualInterest, UUID clientId) {
         this.id = UUID.randomUUID();
         this.approved = approved;
         this.approvedLimit = approvedLimit;

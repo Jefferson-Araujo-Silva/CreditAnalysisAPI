@@ -1,12 +1,9 @@
 package com.app.creditanalysis.controller;
 
-import com.app.creditanalysis.apicreditanalysis.ClientApiCreditAnalysis;
 import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
-import com.app.creditanalysis.repository.entity.CreditAnalysisEntity;
 import com.app.creditanalysis.service.CreditAnalysisService;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CreditAnalysisController {
     @Autowired
     private final CreditAnalysisService creditAnalysisService;
-    private final ClientApiCreditAnalysis creditAnalysisApi;
 
     @PostMapping
     public CreditAnalysisResponse createCredit(@RequestBody CreditAnalysisRequest request) {

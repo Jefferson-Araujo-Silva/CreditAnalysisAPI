@@ -4,14 +4,13 @@ import com.app.creditanalysis.exception.InvalidValueException;
 import com.app.creditanalysis.util.RequestedValueValidator;
 import com.app.creditanalysis.util.ValidationCustom;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
+@SuppressWarnings("unused")
 public record CreditAnalysis(
         Boolean approved,
         BigDecimal approvedLimit,
