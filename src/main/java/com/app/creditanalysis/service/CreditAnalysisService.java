@@ -16,7 +16,6 @@ import feign.FeignException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -58,8 +57,8 @@ public class CreditAnalysisService {
         final BigDecimal maxValueConsidering = new BigDecimal("50000.00");
         final BigDecimal requestedAmount = creditAnalysis.requestedAmount();
         final BigDecimal monthlyIncome;
-        final Double percentIfRequestedAmountIsGreaterThenFiftyPercent = 0.15;
-        final Double percentIfRequestedAmountIsLessThenFiftyPercent = 0.30;
+        final double percentIfRequestedAmountIsGreaterThenFiftyPercent = 0.15;
+        final double percentIfRequestedAmountIsLessThenFiftyPercent = 0.30;
 
         if (creditAnalysis.monthlyIncome().compareTo(maxValueConsidering) > 0) {
             monthlyIncome = maxValueConsidering;
@@ -89,7 +88,7 @@ public class CreditAnalysisService {
     }
 
     private void getIdClient(UUID id) {
-        ClientDto clientReturned = null;
+        ClientDto clientReturned;
         try {
             clientReturned = clientApi.getClientById(id);
             if (clientReturned == null) {
@@ -114,7 +113,7 @@ public class CreditAnalysisService {
         if (responseEntity.isEmpty()) {
             throw new CreditAnalysisNotFound("Credit Analysis with id %s not exists".formatted(id));
         }
-        List<CreditAnalysisEntity> response = new ArrayList<>();
+        List<CreditAnalysisEntity> response;
         response = responseEntity.stream().toList();
 
         return response.stream().map(creditAnalysisResponseMapper::from).collect(Collectors.toList());
@@ -131,7 +130,7 @@ public class CreditAnalysisService {
     public List<CreditAnalysisResponse> findAnalysisByCpfClient(String cpf) {
         final ClientDto client;
         try {
-            client = clientApi.getClientbyCpf(cpf);
+            client = clientApi.getClientByCpf(cpf);
         } catch (FeignException e) {
             throw new ClientNotFoundException("Client not found by cpf %s".formatted(cpf));
         }
