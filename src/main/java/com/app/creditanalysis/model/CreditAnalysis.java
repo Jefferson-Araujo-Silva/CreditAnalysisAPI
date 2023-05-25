@@ -15,12 +15,12 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public record CreditAnalysis(
         Boolean approved,
         BigDecimal approvedLimit,
-        @NotNull @NotBlank @DecimalMin(value = "1.0")
+        @NotNull @DecimalMin(value = "1.0")
         BigDecimal requestedAmount,
         BigDecimal withdrawalLimitValue,
         @NotNull
         UUID clientId,
-        @NotNull @NotBlank
+        @NotNull
         @DecimalMin(value = "1.0")
         BigDecimal monthlyIncome,
         LocalDateTime date,
