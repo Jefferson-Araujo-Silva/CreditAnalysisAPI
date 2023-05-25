@@ -107,12 +107,14 @@ public class CreditAnalysisServiceTest {
     }
     @Test
     public void should_return_credit_analysis_by_id(){
-        Optional<CreditAnalysisEntity> returned = Optional.of(creditAnalysisEntityFactory());
+        CreditAnalysisEntity entity = creditAnalysisEntityFactory();
+        Optional<CreditAnalysisEntity> returned = Optional.of(entity);
         when(creditAnalysisRepository.findById(idClientArgumentCaptor.capture()))
                 .thenReturn(returned);
 
-        List<CreditAnalysisResponse> response = creditAnalysisService.findAnalysisById(creditAnalysisEntityFactory().getId());
+        List<CreditAnalysisResponse> response = creditAnalysisService.findAnalysisById(entity.getId());
         assertNotNull(response);
+        assertEquals(idClientArgumentCaptor.getValue(), response.get(0).id());
     }
     @Test
 
@@ -130,7 +132,6 @@ public class CreditAnalysisServiceTest {
         assertEquals(returned.get(0).getClientId(), response.get(0).clientId());
     }
     @Test
-feature/credit-analysis
     public void should_throw_credit_analysis_analysis_not_found_by_id(){
         Optional<CreditAnalysisEntity> returned = Optional.empty();
         when(creditAnalysisRepository.findById(idClientArgumentCaptor.capture()))
@@ -277,12 +278,13 @@ feature/credit-analysis
     }
 
     public static CreditAnalysisEntity creditAnalysisEntityFactory() {
-        return CreditAnalysisEntity.builder().date(LocalDateTime.now()).approved(true).approvedLimit(new BigDecimal("30.00"))
+        return CreditAnalysisEntity.builder()
+                .date(LocalDateTime.now()).approved(true).approvedLimit(new BigDecimal("30.00"))
                 .withdrawalLimitValue(new BigDecimal("3.00")).annualInterest(15.0).clientId(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560"))
                 .monthlyIncome(new BigDecimal("100.00")).requestedAmount(new BigDecimal("5.00")).annualInterest(15.0).build();
     }
 
     public static ClientDto clientFactory() {
-        return ClientDto.builder().cpf("53887957806").id(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560")).build();
+        return ClientDto.builder().id(UUID.fromString("1f017304-c7cf-45cb-8e2c-5f6ce1f22560")).build();
     }
 }
