@@ -136,5 +136,4 @@ public class CreditAnalysisService {
         }
         return findAnalysisByIdClient(client.id());
     }
-
 }

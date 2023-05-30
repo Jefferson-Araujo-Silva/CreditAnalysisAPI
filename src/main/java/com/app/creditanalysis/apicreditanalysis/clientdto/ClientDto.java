@@ -5,7 +5,6 @@ import lombok.Builder;
 
 public record ClientDto(UUID id) {
     @Builder(toBuilder = true)
-
     public ClientDto{
     }
 }
