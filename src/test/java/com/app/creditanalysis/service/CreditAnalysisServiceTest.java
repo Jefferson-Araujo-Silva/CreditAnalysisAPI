@@ -11,6 +11,7 @@ import com.app.creditanalysis.controller.request.CreditAnalysisRequest;
 import com.app.creditanalysis.controller.response.CreditAnalysisResponse;
 import com.app.creditanalysis.exception.ClientNotFoundException;
 import com.app.creditanalysis.exception.CreditAnalysisNotFound;
+import com.app.creditanalysis.exception.InvalidValueException;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapper;
 import com.app.creditanalysis.mapper.CreditAnalysisEntityMapperImpl;
 import com.app.creditanalysis.mapper.CreditAnalysisMapper;
@@ -233,13 +234,37 @@ public class CreditAnalysisServiceTest {
     public void should_throws_client_not_found_exception_by_cpf() {
         when(creditAnalysisApi.getClientByCpf(cpfClientArgumentCaptor.capture())).thenThrow(FeignException.class);
 
-        final CreditAnalysisRequest creditAnalysisRequest = creditAnalysisRequestFactory();
         ClientNotFoundException clientNotFoundException =
                 assertThrows(ClientNotFoundException.class, () -> creditAnalysisService.findAnalysisByCpfClient("53887957806"));
 
         assertEquals("Client not found by cpf 53887957806", clientNotFoundException.getMessage());
     }
 
+    @Test
+    public void should_throws_InvalidValueException_when_requested_amount_is_negative() {
+        CreditAnalysisRequest requestWithInvalidValue = creditAnalysisRequestFactory().toBuilder()
+                .clientId(UUID.randomUUID())
+                .requestedAmount(new BigDecimal(-1))
+                .build();
+
+        InvalidValueException invalidValueException =
+                assertThrows(InvalidValueException.class, () -> creditAnalysisService.creditAnalysing(requestWithInvalidValue));
+
+        assertEquals("Requested amount should not be negative", invalidValueException.getMessage());
+    }
+
+    @Test
+    public void should_throws_InvalidValueException_when_monthly_income_is_negative() {
+        CreditAnalysisRequest requestWithInvalidValue = creditAnalysisRequestFactory().toBuilder()
+                .clientId(UUID.randomUUID())
+                .requestedAmount(new BigDecimal(1))
+                .monthlyIncome(new BigDecimal(-1)).build();
+
+        InvalidValueException invalidValueException =
+                assertThrows(InvalidValueException.class, () -> creditAnalysisService.creditAnalysing(requestWithInvalidValue));
+
+        assertEquals("Monthly income value should not be negative", invalidValueException.getMessage());
+    }
     @Test
     public void withdrawal_threshold_must_be_10_percent_of_the_approved_amount() {
         final CreditAnalysis creditAnalysis =

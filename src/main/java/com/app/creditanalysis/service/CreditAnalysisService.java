@@ -90,7 +90,7 @@ public class CreditAnalysisService {
         return creditAnalysisRepository.save(entity);
     }
 
-    private UUID getIdClient(UUID id) {
+    private UUID  getIdClient(UUID id) {
         ClientDto clientReturned;
         try {
             clientReturned = clientApi.getClientById(id);
@@ -105,10 +105,6 @@ public class CreditAnalysisService {
             throw clientNotFoundException;
         }
         return clientReturned.id();
-    }
-
-    public void checkIfIdReturnedEqualsIdRequested(UUID idRequested, UUID idReturned){
-
     }
 
     public List<CreditAnalysisResponse> getAllCreditAnalysis() {
