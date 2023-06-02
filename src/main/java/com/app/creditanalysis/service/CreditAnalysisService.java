@@ -16,6 +16,7 @@ import feign.FeignException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,17 +39,23 @@ public class CreditAnalysisService {
         final CreditAnalysis creditAnalysisToBeSaved;
         if (creditAnalysis.approved()) {
             creditAnalysisToBeSaved = performCreditAnalysis(creditAnalysis);
-        } else {
+        }else {
             creditAnalysisToBeSaved = notApproved(creditAnalysis);
         }
-        final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisToBeSaved);
-        final CreditAnalysisEntity creditAnalysisSaved = saveCreditAnalysis(creditAnalysisEntity);
-        return creditAnalysisResponseMapper.from(creditAnalysisSaved);
+            final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisToBeSaved);
+            final CreditAnalysisEntity creditAnalysisSaved = saveCreditAnalysis(creditAnalysisEntity);
+            return creditAnalysisResponseMapper.from(creditAnalysisSaved);
     }
 
-    public CreditAnalysis notApproved(CreditAnalysis creditAnalysis) {
-        return creditAnalysis.toBuilder().approved(false).monthlyIncome(creditAnalysis.monthlyIncome()).approvedLimit(new BigDecimal("0.0"))
-                .withdrawalLimitValue(new BigDecimal("0.0")).date(LocalDateTime.now()).annualInterest(15.0).clientId(creditAnalysis.clientId())
+    public CreditAnalysis notApproved(CreditAnalysis creditAnalysis){
+        return creditAnalysis.toBuilder()
+                .approved(false)
+                .monthlyIncome(creditAnalysis.monthlyIncome())
+                .approvedLimit(new BigDecimal("0.0"))
+                .withdrawalLimitValue(new BigDecimal("0.0"))
+                .date(LocalDateTime.now())
+                .annualInterest(15.0)
+                .clientId(creditAnalysis.clientId())
                 .requestedAmount(creditAnalysis.requestedAmount()).build();
     }
 
@@ -57,8 +64,6 @@ public class CreditAnalysisService {
         final BigDecimal maxValueConsidering = new BigDecimal("50000.00");
         final BigDecimal requestedAmount = creditAnalysis.requestedAmount();
         final BigDecimal monthlyIncome;
-        final double percentIfRequestedAmountIsGreaterThenFiftyPercent = 0.15;
-        final double percentIfRequestedAmountIsLessThenFiftyPercent = 0.30;
 
         if (creditAnalysis.monthlyIncome().compareTo(maxValueConsidering) > 0) {
             monthlyIncome = maxValueConsidering;
@@ -72,11 +77,9 @@ public class CreditAnalysisService {
         final BigDecimal withdrawalLimit;
 
         if (requestedAmount.compareTo(fiftyPercent) > 0) {
-            approvedCreditAmount =
-                    monthlyIncome.multiply(BigDecimal.valueOf(percentIfRequestedAmountIsGreaterThenFiftyPercent)).setScale(2, RoundingMode.HALF_EVEN);
+            approvedCreditAmount = monthlyIncome.multiply(BigDecimal.valueOf(0.15)).setScale(2, RoundingMode.HALF_EVEN);
         } else {
-            approvedCreditAmount =
-                    monthlyIncome.multiply(BigDecimal.valueOf(percentIfRequestedAmountIsLessThenFiftyPercent)).setScale(2, RoundingMode.HALF_EVEN);
+            approvedCreditAmount = monthlyIncome.multiply(BigDecimal.valueOf(0.30)).setScale(2, RoundingMode.HALF_EVEN);
         }
         withdrawalLimit = approvedCreditAmount.multiply(Withdrawal_Limit_Rate).setScale(2, RoundingMode.HALF_EVEN);
 
@@ -88,24 +91,29 @@ public class CreditAnalysisService {
     }
 
     private void getIdClient(UUID id) {
-        ClientDto clientReturned;
+        ClientDto clientReturned = null;
         try {
             clientReturned = clientApi.getClientById(id);
-            if (clientReturned == null) {
+            if(clientReturned == null) {
                 ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
                 clientNotFoundException.printStackTrace();
                 throw clientNotFoundException;
             }
         } catch (FeignException e) {
-            ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
-            clientNotFoundException.printStackTrace();
-            throw clientNotFoundException;
+                ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
+                clientNotFoundException.printStackTrace();
+                throw clientNotFoundException;
         }
     }
 
     public List<CreditAnalysisResponse> getAllCreditAnalysis() {
         final List<CreditAnalysisEntity> allEntities = creditAnalysisRepository.findAll();
-        return allEntities.stream().map(creditAnalysisResponseMapper::from).collect(Collectors.toList());
+        final List<CreditAnalysisResponse> allResponses = new ArrayList<>();
+        for (CreditAnalysisEntity creditAnalysisEntity : allEntities) {
+            final CreditAnalysisResponse actualResponse = creditAnalysisResponseMapper.from(creditAnalysisEntity);
+            allResponses.add(actualResponse);
+        }
+        return allResponses;
     }
 
     public List<CreditAnalysisResponse> findAnalysisById(UUID id) {
@@ -113,10 +121,10 @@ public class CreditAnalysisService {
         if (responseEntity.isEmpty()) {
             throw new CreditAnalysisNotFound("Credit Analysis with id %s not exists".formatted(id));
         }
-        List<CreditAnalysisEntity> response;
+        List<CreditAnalysisEntity> response = new ArrayList<>();
         response = responseEntity.stream().toList();
 
-        return response.stream().map(creditAnalysisResponseMapper::from).collect(Collectors.toList());
+        return  response.stream().map(creditAnalysisResponseMapper::from).collect(Collectors.toList());
     }
 
     public List<CreditAnalysisResponse> findAnalysisByIdClient(UUID id) {
@@ -130,10 +138,11 @@ public class CreditAnalysisService {
     public List<CreditAnalysisResponse> findAnalysisByCpfClient(String cpf) {
         final ClientDto client;
         try {
-            client = clientApi.getClientByCpf(cpf);
+            client = clientApi.getClientbyCpf(cpf);
         } catch (FeignException e) {
             throw new ClientNotFoundException("Client not found by cpf %s".formatted(cpf));
         }
         return findAnalysisByIdClient(client.id());
     }
+
 }
