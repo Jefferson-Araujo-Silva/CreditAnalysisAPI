@@ -62,8 +62,6 @@ public class CreditAnalysisExceptionHandler {
         else {
             problemDetail.setDetail("Values in credit analysis JSON must not be null");
         }
-            problemDetail.setDetail("Values in credit analysis JSON must not be null");
-        }
         problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
         problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
         return problemDetail;

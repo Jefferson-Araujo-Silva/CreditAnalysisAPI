@@ -8,4 +8,4 @@ public record ClientDto(UUID id) {
 
     public ClientDto {
     }
-} // faltava esta chave, seu codigo não estava nem compilando
+} // faltava esta chave, seu codigo não estava nem compilando✅
