@@ -26,6 +26,8 @@ public class CreditAnalysisController {
         return creditAnalysisService.creditAnalysing(request);
     }
 
+    // Este endpoint esta incorreto, para filtrar utiliza query parameters
+    // Voce testou este endpoint?
     @GetMapping(path = "/find-by-cpf/{cpf}")
     public List<CreditAnalysisResponse> findAnalysisByCpfClient(@RequestParam String cpf) {
         return creditAnalysisService.findAnalysisByCpfClient(cpf);
@@ -36,11 +38,13 @@ public class CreditAnalysisController {
         return creditAnalysisService.getAllCreditAnalysis();
     }
 
+    // Voce testou este endpoint?
     @GetMapping(path = "/find-by-id/{id}")
     public List<CreditAnalysisResponse> findAnalysisById(@RequestParam UUID id) {
         return creditAnalysisService.findAnalysisById(id);
     }
 
+    // Voce testou este endpoint?
     @GetMapping(path = "/find-by-id-client/{id}")
     public List<CreditAnalysisResponse> findAnalysisByIdClient(@RequestParam UUID id) {
         return creditAnalysisService.findAnalysisByIdClient(id);

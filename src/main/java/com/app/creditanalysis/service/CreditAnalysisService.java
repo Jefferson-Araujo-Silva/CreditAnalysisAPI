@@ -34,8 +34,11 @@ public class CreditAnalysisService {
 
     public CreditAnalysisResponse creditAnalysing(CreditAnalysisRequest request) {
         final CreditAnalysis creditAnalysis = creditAnalysisMapper.from(request);
+        // Aqui é feito um get do cliente mas nada é retornado
         getIdClient(request.clientId());
         final CreditAnalysis creditAnalysisToBeSaved;
+        // esta verificação esta a criação do objeto, isso deixa seu codigo confuso e com regras espalhadas em classes
+        // que não tem responsabilidade de aplicar regras de negocio. Separe o que valida a consitencia dos atributos do que valida regra de negocio
         if (creditAnalysis.approved()) {
             creditAnalysisToBeSaved = performCreditAnalysis(creditAnalysis);
         } else {
@@ -47,6 +50,7 @@ public class CreditAnalysisService {
     }
 
     public CreditAnalysis notApproved(CreditAnalysis creditAnalysis) {
+        // new BigDecimal("0.0") substituir por BigDecimal.ZERO
         return creditAnalysis.toBuilder().approved(false).monthlyIncome(creditAnalysis.monthlyIncome()).approvedLimit(new BigDecimal("0.0"))
                 .withdrawalLimitValue(new BigDecimal("0.0")).date(LocalDateTime.now()).annualInterest(15.0).clientId(creditAnalysis.clientId())
                 .requestedAmount(creditAnalysis.requestedAmount()).build();
