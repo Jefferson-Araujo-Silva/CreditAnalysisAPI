@@ -45,8 +45,8 @@ public record CreditAnalysis(
         this.date = date;
         this.annualInterest = 15.0;
         RequestedValueValidator validator = new RequestedValueValidator();
-        boolean isValid = validator.isValid(this);
+        assert requestedAmount != null;
+        this.approved = requestedAmount.compareTo(monthlyIncome) <= 0;
         ValidationCustom.validator(this);
-        this.approved = isValid;
     }
 }

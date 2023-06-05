@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@SuppressWarnings("UnusedReturnValue")
 @Service
 @RequiredArgsConstructor
 public class CreditAnalysisService {
@@ -35,20 +36,22 @@ public class CreditAnalysisService {
     public CreditAnalysisResponse creditAnalysing(CreditAnalysisRequest request) {
         final CreditAnalysis creditAnalysis = creditAnalysisMapper.from(request);
         getIdClient(request.clientId());
-        final CreditAnalysis creditAnalysisToBeSaved;
-        if (creditAnalysis.approved()) {
-            creditAnalysisToBeSaved = performCreditAnalysis(creditAnalysis);
-        } else {
-            creditAnalysisToBeSaved = notApproved(creditAnalysis);
-        }
+        final CreditAnalysis creditAnalysisToBeSaved = verifyIfApprovedOrNotApproved(creditAnalysis);
         final CreditAnalysisEntity creditAnalysisEntity = creditAnalysisEntityMapper.from(creditAnalysisToBeSaved);
         final CreditAnalysisEntity creditAnalysisSaved = saveCreditAnalysis(creditAnalysisEntity);
         return creditAnalysisResponseMapper.from(creditAnalysisSaved);
     }
-
+    public CreditAnalysis verifyIfApprovedOrNotApproved(CreditAnalysis creditAnalysis){
+        CreditAnalysis creditAnalysisToBeSaved;
+        creditAnalysisToBeSaved = creditAnalysis.approved() ?
+                performCreditAnalysis(creditAnalysis) :
+                notApproved(creditAnalysis);
+        return creditAnalysisToBeSaved;
+    }
     public CreditAnalysis notApproved(CreditAnalysis creditAnalysis) {
+        // new BigDecimal("0.0") substituir por BigDecimal.ZERO✅
         return creditAnalysis.toBuilder().approved(false).monthlyIncome(creditAnalysis.monthlyIncome()).approvedLimit(new BigDecimal("0.0"))
-                .withdrawalLimitValue(new BigDecimal("0.0")).date(LocalDateTime.now()).annualInterest(15.0).clientId(creditAnalysis.clientId())
+                .withdrawalLimitValue(BigDecimal.ZERO).date(LocalDateTime.now()).annualInterest(15.0).clientId(creditAnalysis.clientId())
                 .requestedAmount(creditAnalysis.requestedAmount()).build();
     }
 
@@ -101,6 +104,7 @@ public class CreditAnalysisService {
             clientNotFoundException.printStackTrace();
             throw clientNotFoundException;
         }
+        return clientReturned.id();
     }
 
     public List<CreditAnalysisResponse> getAllCreditAnalysis() {
