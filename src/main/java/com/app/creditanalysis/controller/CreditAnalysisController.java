@@ -11,10 +11,10 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,8 +30,10 @@ public class CreditAnalysisController {
         return creditAnalysisService.creditAnalysing(request);
     }
 
-    @GetMapping(path = "/find-by-cpf/{cpf}")
-    public List<CreditAnalysisResponse> findAnalysisByCpfClient(@RequestParam String cpf) {
+    // Este endpoint esta incorreto, para filtrar utiliza query parameters
+    // Voce testou este endpoint?
+    @GetMapping(path = "/cpf/{cpf}")
+    public List<CreditAnalysisResponse> getAnalysisByCpfClient(@PathVariable(value = "cpf") String cpf) {
         return creditAnalysisService.findAnalysisByCpfClient(cpf);
     }
 
@@ -40,13 +42,15 @@ public class CreditAnalysisController {
         return creditAnalysisService.getAllCreditAnalysis();
     }
 
-    @GetMapping(path = "/find-by-id/{id}")
-    public List<CreditAnalysisResponse> findAnalysisById(@RequestParam UUID id) {
+    // Voce testou este endpoint?
+    @GetMapping(path = "/id/{id}")
+    public List<CreditAnalysisResponse> getAnalysisById(@PathVariable(value = "id") UUID id) {
         return creditAnalysisService.findAnalysisById(id);
     }
 
-    @GetMapping(path = "/find-by-id-client/{id}")
-    public List<CreditAnalysisResponse> findAnalysisByIdClient(@RequestParam UUID id) {
+    // Voce testou este endpoint?
+    @GetMapping(path = "/client/{id}")
+    public List<CreditAnalysisResponse> getAnalysisByIdClient(@PathVariable(value = "id") UUID id) {
         return creditAnalysisService.findAnalysisByIdClient(id);
     }
 }
