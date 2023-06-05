@@ -15,6 +15,7 @@ public class RequestedValueValidator {
         validator = factory.getValidator();
     }
 
+    // Melhor não validar um regra de negocio em uma classe utilitaria
     public boolean isValid(CreditAnalysis creditAnalysis) {
         BigDecimal monthlyIncome = creditAnalysis.monthlyIncome();
         BigDecimal requestedAmount = creditAnalysis.requestedAmount();

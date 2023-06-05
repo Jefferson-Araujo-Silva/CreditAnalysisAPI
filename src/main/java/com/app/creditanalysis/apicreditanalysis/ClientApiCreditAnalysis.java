@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "client", url = "${url.client.host}")
 public interface ClientApiCreditAnalysis {
+    // Esta url esta fora do padrão REST em clientes /clients?cpf={cpf}
     @GetMapping(path = "/search-by-cpf/cpf?cpf={cpf}")
     ClientDto getClientByCpf(@PathVariable(value = "cpf") String cpf);
 
+    // Esta url esta fora do padrão REST em clientes /clients/{id}
     @GetMapping(path = "/search-by-id/id?id={id}")
     ClientDto getClientById(@PathVariable(value = "id") UUID id);
 }

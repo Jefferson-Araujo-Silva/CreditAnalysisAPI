@@ -6,5 +6,6 @@ import lombok.Builder;
 public record ClientDto(UUID id) {
     @Builder(toBuilder = true)
 
-    public ClientDto{
-}
+    public ClientDto {
+    }
+} // faltava esta chave, seu codigo não estava nem compilando✅
