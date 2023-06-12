@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class CustomLogbackJsonLayout extends JsonLayout {
 
-    public static final String APPLICATION = "Hello-API";
+    public static final String APPLICATION = "Credit-analysis";
     public static final String REGION = EnvUtil.getEnvOrDefault("APP_REGION", "na");
     public static final String MACHINE_NAME = EnvUtil.getEnvOrDefault("HOSTNAME", "na");
 

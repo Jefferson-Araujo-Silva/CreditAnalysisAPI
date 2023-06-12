@@ -5,7 +5,7 @@
 
     <appender name="CONSOLE"
               class="ch.qos.logback.core.ConsoleAppender" target="System.out">
-        <layout class="com.example.structured.logging.logger.CustomLogbackJsonLayout">
+        <layout class="com.app.creditanalysis.logger.CustomLogbackJsonLayout">
             <jsonFormatter
                     class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
                 <prettyPrint>false</prettyPrint>
@@ -28,7 +28,7 @@
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
 
-        <layout class="com.example.structured.logging.logger.CustomLogbackJsonLayout">
+        <layout class="com.app.creditanalysis.logger.CustomLogbackJsonLayout">
             <jsonFormatter
                     class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
                 <prettyPrint>false</prettyPrint>
