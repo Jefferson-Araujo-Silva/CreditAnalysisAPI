@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@SuppressWarnings("ALL")
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class CreditAnalysisServiceTest {
@@ -237,7 +238,7 @@ public class CreditAnalysisServiceTest {
         ClientNotFoundException clientNotFoundException =
                 assertThrows(ClientNotFoundException.class, () -> creditAnalysisService.findAnalysisByCpfClient("53887957806"));
 
-        assertEquals("Client not found by cpf 53887957806", clientNotFoundException.getMessage());
+        assertEquals("Client not found by cpf %s".formatted(cpfClientArgumentCaptor.getValue()), clientNotFoundException.getMessage());
     }
 
     @Test

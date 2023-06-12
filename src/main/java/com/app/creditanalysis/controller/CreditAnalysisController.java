@@ -26,8 +26,8 @@ public class CreditAnalysisController {
         return creditAnalysisService.creditAnalysing(request);
     }
 
-    @GetMapping(path = "/cpf/{cpf}")
-    public List<CreditAnalysisResponse> getAnalysisByCpfClient(@PathVariable(value = "cpf") String cpf) {
+    @GetMapping(path = "/client/cpf/{cpf}")
+    public List<CreditAnalysisResponse> getAnalysisByCpf(@PathVariable(value = "cpf") String cpf) {
         return creditAnalysisService.findAnalysisByCpfClient(cpf);
     }
 
@@ -36,12 +36,11 @@ public class CreditAnalysisController {
         return creditAnalysisService.getAllCreditAnalysis();
     }
 
-    @GetMapping(path = "/id/{id}")
+    @GetMapping(path = "/{id}")
     public List<CreditAnalysisResponse> getAnalysisById(@PathVariable(value = "id") UUID id) {
         return creditAnalysisService.findAnalysisById(id);
     }
 
-    // Voce testou este endpoint?
     @GetMapping(path = "/client/{id}")
     public List<CreditAnalysisResponse> getAnalysisByIdClient(@PathVariable(value = "id") UUID id) {
         return creditAnalysisService.findAnalysisByIdClient(id);
