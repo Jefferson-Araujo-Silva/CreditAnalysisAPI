@@ -37,6 +37,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 @SuppressWarnings("ALL")
 @ExtendWith(MockitoExtension.class)
@@ -121,6 +122,9 @@ public class CreditAnalysisServiceTest {
         List<CreditAnalysisResponse> response;
         response = creditAnalysisService
                 .findAnalysisByCpfClient("53887957806");
+        assertEquals(responseList.get(0).getId(), response.get(0).id());
+        assertEquals(responseList.get(0).getClientId(), response.get(0).clientId());
+        assertEquals(responseList.get(0).getApproved(), response.get(0).approved());
     }
 
     @Test
@@ -180,6 +184,13 @@ public class CreditAnalysisServiceTest {
         final ClientNotFoundException clientNotFoundException =
                 assertThrows(ClientNotFoundException.class, () -> creditAnalysisService.creditAnalysing(creditAnalysisRequestFactory()));
         assertEquals("Client not found by id 1f017304-c7cf-45cb-8e2c-5f6ce1f22560", clientNotFoundException.getMessage());
+    }
+    @Test
+    public void should_throws_HttpMessageNotReadableException_when_requested_amount_is_null(){
+        CreditAnalysisRequest request = creditAnalysisRequestFactory().toBuilder().requestedAmount(null).build();
+        InvalidValueException expected = assertThrows(InvalidValueException.class,
+                ()-> creditAnalysisService.creditAnalysing(request));
+        assertEquals("Values in credit analysis JSON must not be null", expected.getMessage());
     }
 
     @Test

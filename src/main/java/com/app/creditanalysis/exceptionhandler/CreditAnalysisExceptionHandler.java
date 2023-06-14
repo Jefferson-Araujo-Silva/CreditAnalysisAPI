@@ -48,7 +48,7 @@ public class CreditAnalysisExceptionHandler {
         problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
         return problemDetail;
     }
-    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ExceptionHandler({HttpMessageNotReadableException.class, InvalidValueException.class})
     public ProblemDetail httpMessageNotReadableException(HttpMessageNotReadableException exception) {
         logger.error(String.valueOf(exception));
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
