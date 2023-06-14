@@ -11,7 +11,7 @@ public record CreditAnalysisRequest(
         UUID clientId,
         @NotNull @NonNull
         BigDecimal monthlyIncome,
-        @NotNull @NonNull
+        @NotNull
         BigDecimal requestedAmount) {
     @Builder(toBuilder = true)
     public CreditAnalysisRequest {

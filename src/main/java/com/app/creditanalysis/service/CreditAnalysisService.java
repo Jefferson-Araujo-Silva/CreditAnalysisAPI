@@ -91,20 +91,19 @@ public class CreditAnalysisService {
     }
 
     private UUID  getIdClient(UUID id) {
-        ClientDto clientReturned;
         try {
-            clientReturned = clientApi.getClientById(id);
-            if (clientReturned == null) {
+            ClientDto dto = clientApi.getClientById(id);
+            if (dto == null) {
                 ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
                 clientNotFoundException.printStackTrace();
                 throw clientNotFoundException;
             }
+            return dto.id();
         } catch (FeignException e) {
             ClientNotFoundException clientNotFoundException = new ClientNotFoundException("Client not found by id %s".formatted(id));
             clientNotFoundException.printStackTrace();
             throw clientNotFoundException;
         }
-        return clientReturned.id();
     }
 
     public List<CreditAnalysisResponse> getAllCreditAnalysis() {

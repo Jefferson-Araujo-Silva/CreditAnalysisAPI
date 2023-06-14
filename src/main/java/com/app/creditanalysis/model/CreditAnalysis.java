@@ -36,17 +36,19 @@ public record CreditAnalysis(
             } else if (monthlyIncome.compareTo(minValueConsidering) < 0) {
                 throw new InvalidValueException("Monthly income value should not be negative");
             }
+
+            this.approvedLimit = approvedLimit;
+            this.requestedAmount = requestedAmount;
+            this.withdrawalLimitValue = withdrawalLimitValue;
+            this.clientId = clientId;
+            this.monthlyIncome = monthlyIncome;
+            this.date = date;
+            this.annualInterest = 15.0;
+            RequestedValueValidator validator = new RequestedValueValidator();
+            this.approved = requestedAmount.compareTo(monthlyIncome) <= 0;
+            ValidationCustom.validator(this);
+        }else {
+            throw new InvalidValueException("Values in credit analysis JSON must not be null");
         }
-        this.approvedLimit = approvedLimit;
-        this.requestedAmount = requestedAmount;
-        this.withdrawalLimitValue = withdrawalLimitValue;
-        this.clientId = clientId;
-        this.monthlyIncome = monthlyIncome;
-        this.date = date;
-        this.annualInterest = 15.0;
-        RequestedValueValidator validator = new RequestedValueValidator();
-        assert requestedAmount != null;
-        this.approved = requestedAmount.compareTo(monthlyIncome) <= 0;
-        ValidationCustom.validator(this);
     }
 }
