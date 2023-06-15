@@ -131,13 +131,13 @@ public class CreditAnalysisService {
     }
 
     public List<CreditAnalysisResponse> findAnalysisByCpfClient(String cpf) {
-        final ClientDto client;
+        final List<ClientDto> client;
         try {
             client = clientApi.getClientByCpf(cpf);
         } catch (FeignException e) {
             throw new ClientNotFoundException("Client not found by cpf %s".formatted(cpf));
         }
-        return findAnalysisByIdClient(client.id());
+        return findAnalysisByIdClient(client.get(0).id());
     }
 
 }
