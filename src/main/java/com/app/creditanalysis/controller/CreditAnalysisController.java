@@ -30,7 +30,7 @@ public class CreditAnalysisController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CreditAnalysisExceptionHandler.class);
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public CreditAnalysisResponse createCredit(@RequestBody CreditAnalysisRequest request) {
+    public CreditAnalysisResponse postCreditAnalysis(@RequestBody CreditAnalysisRequest request) {
         MDC.put("correlationId", UUID.randomUUID().toString());
         LOGGER.info("accessed endpoint method post");
         return creditAnalysisService.creditAnalysing(request);

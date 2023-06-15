@@ -49,7 +49,6 @@ public class CreditAnalysisService {
         return creditAnalysisToBeSaved;
     }
     public CreditAnalysis notApproved(CreditAnalysis creditAnalysis) {
-        // new BigDecimal("0.0") substituir por BigDecimal.ZERO✅
         return creditAnalysis.toBuilder().approved(false).monthlyIncome(creditAnalysis.monthlyIncome()).approvedLimit(new BigDecimal("0.0"))
                 .withdrawalLimitValue(BigDecimal.ZERO).date(LocalDateTime.now()).annualInterest(15.0).clientId(creditAnalysis.clientId())
                 .requestedAmount(creditAnalysis.requestedAmount()).build();
