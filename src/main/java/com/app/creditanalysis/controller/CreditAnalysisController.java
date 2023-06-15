@@ -46,7 +46,7 @@ public class CreditAnalysisController {
             LOGGER.info("accessed endpoint method get with parameter cpf /%s".formatted(cpf));
             return creditAnalysisService.findAnalysisByCpfClient(cpf);
         } else if (clientId != null) {
-            MDC.put("corre lationId", UUID.randomUUID().toString());
+            MDC.put("correlationId", UUID.randomUUID().toString());
             LOGGER.info("accessed endpoint method get with id parameter /%s".formatted(clientId));
             return creditAnalysisService.findAnalysisByIdClient(clientId);
         }
