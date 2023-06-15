@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,15 +33,16 @@ public class CreditAnalysisController {
         return creditAnalysisService.creditAnalysing(request);
     }
 
-    @GetMapping(path = "/client/cpf/{cpf}")
-    public List<CreditAnalysisResponse> getAnalysisByCpf(@PathVariable(value = "cpf") String cpf) {
-        MDC.put("correlationId", UUID.randomUUID().toString());
-        LOGGER.info("accessed endpoint method get /client/cpf/%s".formatted(cpf));
-        return creditAnalysisService.findAnalysisByCpfClient(cpf);
-    }
-
     @GetMapping
-    public List<CreditAnalysisResponse> getAllAnalysis() {
+    public List<CreditAnalysisResponse> getAllAnalysisByClient(
+            @RequestParam(value = "idClient",required = false) UUID idClient,
+            @RequestParam(value = "cpf", required = false) String cpf
+    ) {
+        if(cpf != null){
+            return creditAnalysisService.findAnalysisByCpfClient(cpf);
+        } else if (idClient != null) {
+            return creditAnalysisService.findAnalysisByIdClient(idClient);
+        }
         return creditAnalysisService.getAllCreditAnalysis();
     }
 
@@ -51,10 +53,4 @@ public class CreditAnalysisController {
         return creditAnalysisService.findAnalysisById(id);
     }
 
-    @GetMapping(path = "/client/{id}")
-    public List<CreditAnalysisResponse> getAnalysisByIdClient(@PathVariable(value = "id") UUID id) {
-        MDC.put("correlationId", UUID.randomUUID().toString());
-        LOGGER.info("accessed endpoint method get /client/%s".formatted(id));
-        return creditAnalysisService.findAnalysisByIdClient(id);
-    }
 }

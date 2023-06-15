@@ -67,13 +67,13 @@ public class CreditAnalysisExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(InvalidValueException.class)
-    public ProblemDetail invalidValueException(InvalidValueException exception) {
-        logger.error(String.valueOf(exception));
-        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setDetail(exception.getMessage());
-        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
-        problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
-        return problemDetail;
-    }
+//    @ExceptionHandler(InvalidValueException.class)
+//    public ProblemDetail invalidValueException(InvalidValueException exception) {
+//        logger.error(String.valueOf(exception));
+//        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+//        problemDetail.setDetail(exception.getMessage());
+//        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
+//        problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
+//        return problemDetail;
+//    }
 }
