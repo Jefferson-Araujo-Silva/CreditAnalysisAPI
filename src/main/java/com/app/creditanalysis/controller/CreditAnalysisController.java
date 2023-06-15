@@ -39,10 +39,16 @@ public class CreditAnalysisController {
             @RequestParam(value = "cpf", required = false) String cpf
     ) {
         if(cpf != null){
+            MDC.put("correlationId", UUID.randomUUID().toString());
+            LOGGER.info("accessed endpoint method get with parameter cpf /%s".formatted(cpf));
             return creditAnalysisService.findAnalysisByCpfClient(cpf);
         } else if (idClient != null) {
+            MDC.put("correlationId", UUID.randomUUID().toString());
+            LOGGER.info("accessed endpoint method get with id parameter /%s".formatted(idClient));
             return creditAnalysisService.findAnalysisByIdClient(idClient);
         }
+        MDC.put("correlationId", UUID.randomUUID().toString());
+        LOGGER.info("accessed endpoint method get without parameter");
         return creditAnalysisService.getAllCreditAnalysis();
     }
 
