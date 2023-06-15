@@ -38,17 +38,17 @@ public class CreditAnalysisController {
 
     @GetMapping
     public List<CreditAnalysisResponse> getAllAnalysisByClient(
-            @RequestParam(value = "idClient",required = false) UUID idClient,
+            @RequestParam(value = "clientId",required = false) UUID clientId,
             @RequestParam(value = "cpf", required = false) String cpf
     ) {
         if(cpf != null){
             MDC.put("correlationId", UUID.randomUUID().toString());
             LOGGER.info("accessed endpoint method get with parameter cpf /%s".formatted(cpf));
             return creditAnalysisService.findAnalysisByCpfClient(cpf);
-        } else if (idClient != null) {
+        } else if (clientId != null) {
             MDC.put("correlationId", UUID.randomUUID().toString());
-            LOGGER.info("accessed endpoint method get with id parameter /%s".formatted(idClient));
-            return creditAnalysisService.findAnalysisByIdClient(idClient);
+            LOGGER.info("accessed endpoint method get with id parameter /%s".formatted(clientId));
+            return creditAnalysisService.findAnalysisByIdClient(clientId);
         }
         MDC.put("correlationId", UUID.randomUUID().toString());
         LOGGER.info("accessed endpoint method get without parameter");
