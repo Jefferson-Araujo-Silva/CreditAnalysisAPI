@@ -134,6 +134,7 @@ public class CreditAnalysisService {
         try {
             client = clientApi.getClientByCpf(cpf);
         } catch (FeignException e) {
+            System.out.println(e.getMessage());
             throw new ClientNotFoundException("Client not found by cpf %s".formatted(cpf));
         }
         return findAnalysisByIdClient(client.get(0).id());
