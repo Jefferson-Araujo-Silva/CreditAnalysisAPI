@@ -3,7 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+**/app_logs.log
 ### STS ###
 .apt_generated
 .classpath
@@ -15,6 +15,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
+log/app_logs.log
 *.iws
 *.iml
 *.ipr

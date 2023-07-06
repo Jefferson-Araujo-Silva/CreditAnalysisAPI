@@ -49,7 +49,6 @@ public class CreditAnalysisService {
         return creditAnalysisToBeSaved;
     }
     public CreditAnalysis notApproved(CreditAnalysis creditAnalysis) {
-        // new BigDecimal("0.0") substituir por BigDecimal.ZERO✅
         return creditAnalysis.toBuilder().approved(false).monthlyIncome(creditAnalysis.monthlyIncome()).approvedLimit(new BigDecimal("0.0"))
                 .withdrawalLimitValue(BigDecimal.ZERO).date(LocalDateTime.now()).annualInterest(15.0).clientId(creditAnalysis.clientId())
                 .requestedAmount(creditAnalysis.requestedAmount()).build();
@@ -131,13 +130,14 @@ public class CreditAnalysisService {
     }
 
     public List<CreditAnalysisResponse> findAnalysisByCpfClient(String cpf) {
-        final ClientDto client;
+        final List<ClientDto> client;
         try {
             client = clientApi.getClientByCpf(cpf);
         } catch (FeignException e) {
+            System.out.println(e.getMessage());
             throw new ClientNotFoundException("Client not found by cpf %s".formatted(cpf));
         }
-        return findAnalysisByIdClient(client.id());
+        return findAnalysisByIdClient(client.get(0).id());
     }
 
 }

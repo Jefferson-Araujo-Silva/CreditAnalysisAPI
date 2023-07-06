@@ -37,7 +37,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 
 @SuppressWarnings("ALL")
 @ExtendWith(MockitoExtension.class)
@@ -116,7 +115,7 @@ public class CreditAnalysisServiceTest {
     public void should_return_where_client_where_cpf_client_is_53887957806() {
         List<CreditAnalysisEntity> responseList = new ArrayList<>();
         responseList.add(creditAnalysisEntityFactory());
-        when(creditAnalysisApi.getClientByCpf(cpfClientArgumentCaptor.capture())).thenReturn(clientFactory());
+        when(creditAnalysisApi.getClientByCpf(cpfClientArgumentCaptor.capture())).thenReturn(List.of(clientFactory()));
         when(creditAnalysisRepository.findAllByClientId(idClientArgumentCaptor.capture())).thenReturn(responseList);
 
         List<CreditAnalysisResponse> response;

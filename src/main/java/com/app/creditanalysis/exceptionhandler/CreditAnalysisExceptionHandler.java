@@ -22,9 +22,9 @@ public class CreditAnalysisExceptionHandler {
     @ExceptionHandler(ClientNotFoundException.class)
     public ProblemDetail clientNotFoundException(ClientNotFoundException exception) {
         logger.error(String.valueOf(exception));
-        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setDetail(exception.getMessage());
-        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/400"));
+        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/404"));
         problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
         return problemDetail;
     }
@@ -32,9 +32,9 @@ public class CreditAnalysisExceptionHandler {
     @ExceptionHandler(CreditAnalysisNotFound.class)
     public ProblemDetail creditAnalysisExceptionHandler(CreditAnalysisNotFound exception) {
         logger.error(String.valueOf(exception));
-        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setDetail(exception.getMessage());
-        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
+        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/404"));
         problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
         return problemDetail;
     }
@@ -44,7 +44,7 @@ public class CreditAnalysisExceptionHandler {
         logger.error(String.valueOf(exception));
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
-        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
+        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/400"));
         problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
         return problemDetail;
     }
@@ -62,17 +62,7 @@ public class CreditAnalysisExceptionHandler {
         else {
             problemDetail.setDetail("Values in credit analysis JSON must not be null");
         }
-        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
-        problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
-        return problemDetail;
-    }
-
-    @ExceptionHandler(InvalidValueException.class)
-    public ProblemDetail invalidValueException(InvalidValueException exception) {
-        logger.error(String.valueOf(exception));
-        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setDetail(exception.getMessage());
-        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/424"));
+        problemDetail.setType(URI.create("https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/400"));
         problemDetail.setProperty(TIMESTAMP, LocalDateTime.now());
         return problemDetail;
     }

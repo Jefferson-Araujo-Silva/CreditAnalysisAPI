@@ -11,11 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,21 +29,29 @@ public class CreditAnalysisController {
     private final CreditAnalysisService creditAnalysisService;
     private static final Logger LOGGER = LoggerFactory.getLogger(CreditAnalysisExceptionHandler.class);
     @PostMapping
-    public CreditAnalysisResponse createCredit(@RequestBody CreditAnalysisRequest request) {
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public CreditAnalysisResponse postCreditAnalysis(@RequestBody CreditAnalysisRequest request) {
         MDC.put("correlationId", UUID.randomUUID().toString());
         LOGGER.info("accessed endpoint method post");
         return creditAnalysisService.creditAnalysing(request);
     }
 
-    @GetMapping(path = "/client/cpf/{cpf}")
-    public List<CreditAnalysisResponse> getAnalysisByCpf(@PathVariable(value = "cpf") String cpf) {
-        MDC.put("correlationId", UUID.randomUUID().toString());
-        LOGGER.info("accessed endpoint method get /client/cpf/%s".formatted(cpf));
-        return creditAnalysisService.findAnalysisByCpfClient(cpf);
-    }
-
     @GetMapping
-    public List<CreditAnalysisResponse> getAllAnalysis() {
+    public List<CreditAnalysisResponse> getAllAnalysisByClient(
+            @RequestParam(value = "clientId",required = false) UUID clientId,
+            @RequestParam(value = "cpf", required = false) String cpf
+    ) {
+        if(cpf != null){
+            MDC.put("correlationId", UUID.randomUUID().toString());
+            LOGGER.info("accessed endpoint method get with parameter cpf /%s".formatted(cpf));
+            return creditAnalysisService.findAnalysisByCpfClient(cpf);
+        } else if (clientId != null) {
+            MDC.put("correlationId", UUID.randomUUID().toString());
+            LOGGER.info("accessed endpoint method get with id parameter /%s".formatted(clientId));
+            return creditAnalysisService.findAnalysisByIdClient(clientId);
+        }
+        MDC.put("correlationId", UUID.randomUUID().toString());
+        LOGGER.info("accessed endpoint method get without parameter");
         return creditAnalysisService.getAllCreditAnalysis();
     }
 
@@ -51,10 +62,4 @@ public class CreditAnalysisController {
         return creditAnalysisService.findAnalysisById(id);
     }
 
-    @GetMapping(path = "/client/{id}")
-    public List<CreditAnalysisResponse> getAnalysisByIdClient(@PathVariable(value = "id") UUID id) {
-        MDC.put("correlationId", UUID.randomUUID().toString());
-        LOGGER.info("accessed endpoint method get /client/%s".formatted(id));
-        return creditAnalysisService.findAnalysisByIdClient(id);
-    }
 }

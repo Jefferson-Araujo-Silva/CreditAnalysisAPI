@@ -168,6 +168,14 @@
 						<exclude>**/logger/**</exclude>
 						<exclude>**/apicreditanalysis/**</exclude>
 						<exclude>**/util/**</exclude>
+						<exclude>**/CreditAnalysisEntityMapperImpl*</exclude>
+						<exclude>**/CreditAnalysisMapperImpl*</exclude>
+						<exclude>**/CreditAnalysisResponseMapperImpl*</exclude>
+						<exclude>com.app.creditanalysis.repository.entity.CreditAnalysisEntity.getRequestedAmount</exclude>
+						<exclude>com.app.creditanalysis.repository.entity.CreditAnalysisEntity.CreditAnalysisEntity</exclude>
+						<exclude>**/model/**</exclude>
+						<exclude>**/entity/**</exclude>
+						<exclude>**/exception/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
